@@ -25,6 +25,7 @@ func NewCategoryController() ICategoryController {
 	return CategoryController{DB: db}
 }
 
+// 这里有个错误，不知道为什么model的值没有正确传入
 func (c CategoryController) Create(ctx *gin.Context) {
 	var requestCategory model.Category
 	ctx.Bind(&requestCategory)
