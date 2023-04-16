@@ -11,28 +11,35 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 func Register(ctx *gin.Context) {
 
 	// 数据库对象
 	DB := common.GetDB()
-	//defer DB.Close()
 
-	// 获取参数
-	name := ctx.PostForm("name")
-	telephone := ctx.PostForm("telephone")
-	password := ctx.PostForm("password")
+	// 使用结构体来解析body内的参数
+	var requestUser = model.User{}
+	err := ctx.Bind(&requestUser)
+
+	name := requestUser.Name
+	telephone := requestUser.Telephone
+	password := requestUser.Password
 
 	// 数据验证
-	if len(telephone) != 11 {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位")
+	telRE := regexp.MustCompile("^1\\d{10}$")
+	if !telRE.MatchString(telephone) {
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为1开头的11位数字")
 		return
 	}
-	if len(password) < 6 {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "密码必须至少6位")
+	passRE := regexp.MustCompile("^[A-Za-z0-9]{6,18}$")
+	if !passRE.MatchString(password) {
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "密码必须为6-18位的字母与数字的组合")
 		return
 	}
+
+	// 判断是否要生成随机姓名
 	if len(name) == 0 {
 		name = util.RandomString(10)
 	}
@@ -56,21 +63,41 @@ func Register(ctx *gin.Context) {
 	}
 	DB.Create(&newUser)
 
+	// 发放token
+	token, err := common.ReleaseToken(newUser)
+	if err != nil {
+		response.Response(ctx, http.StatusInternalServerError, 500, nil, "系统异常")
+		//ctx.JSON(http.StatusInternalServerError, gin.H{"code": 500, "msg": "系统异常"})
+		log.Printf("token generate error : %v", err)
+		return
+	}
+
 	// 返回结果
-	response.Success(ctx, nil, "注册成功")
+	response.Success(ctx, gin.H{"token": token}, "注册成功")
 
 }
 
 func Login(ctx *gin.Context) {
+
+	// 数据库对象
 	DB := common.GetDB()
 
-	// 获取参数
-	telephone := ctx.PostForm("telephone")
-	password := ctx.PostForm("password")
+	// 使用结构体来解析body内的参数
+	var requestUser = model.User{}
+	err := ctx.Bind(&requestUser)
+
+	telephone := requestUser.Telephone
+	password := requestUser.Password
 
 	// 数据验证
-	if len(telephone) != 11 {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位")
+	telRE := regexp.MustCompile("^1\\d{10}$")
+	if !telRE.MatchString(telephone) {
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为1开头的11位数字")
+		return
+	}
+	passRE := regexp.MustCompile("^[A-Za-z0-9]{6,18}$")
+	if !passRE.MatchString(password) {
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "密码必须为6-18位的字母与数字的组合")
 		return
 	}
 
@@ -78,7 +105,7 @@ func Login(ctx *gin.Context) {
 	var user model.User
 	DB.Where("telephone = ?", telephone).First(&user)
 	if user.ID == 0 {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "用户不存在")
+		response.Response(ctx, http.StatusUnprocessableEntity, 400, nil, "用户不存在")
 		return
 	}
 
@@ -103,14 +130,13 @@ func Login(ctx *gin.Context) {
 
 func Info(ctx *gin.Context) {
 	user, _ := ctx.Get("user")
-	ctx.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"user": dto.ToUserDto(user.(model.User))}})
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"data": gin.H{"user": dto.ToUserDto(user.(model.User))}})
 }
 
 func isTelephoneExist(db *gorm.DB, telephone string) bool {
 	var user model.User
 	db.Where("telephone = ?", telephone).First(&user)
-	if user.ID != 0 {
-		return true
-	}
-	return false
+	return user.ID != 0
 }

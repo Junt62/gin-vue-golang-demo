@@ -1,2 +1,11 @@
-
-a
+server:
+    port: 1016
+datasource:
+    driverName: mysql
+    host: 127.0.0.1
+    port: 3306
+    database: ginessential
+    username: root
+    password: root
+    charset: utf8
+    loc: Asia/Shanghai

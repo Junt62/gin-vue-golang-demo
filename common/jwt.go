@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var jwtKey = []byte("a_secret_crect")
+var jwtKey = []byte("a_secret_create")
 
 type Claims struct {
 	UserId uint
@@ -20,7 +20,7 @@ func ReleaseToken(user model.User) (string, error) {
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 			IssuedAt:  time.Now().Unix(),
-			Issuer:    "oceanleran.tech",
+			Issuer:    "oceanlearn.tech",
 			Subject:   "user token",
 		},
 	}
