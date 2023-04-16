@@ -123,4 +123,74 @@ Low-level Commands / Interrogators
    ls-files                Show information about files in the index and the working tree
    ls-remote               List references in a remote repository
    ls-tree                 List the contents of a tree object
-   merge-base     
+   merge-base              Find as good common ancestors as possible for a merge
+   name-rev                Find symbolic names for given revs
+   pack-redundant          Find redundant pack files
+   rev-list                Lists commit objects in reverse chronological order
+   rev-parse               Pick out and massage parameters
+   show-index              Show packed archive index
+   show-ref                List references in a local repository
+   unpack-file             Creates a temporary file with a blob's contents
+   var                     Show a Git logical variable
+   verify-pack             Validate packed Git archive files
+
+Low-level Commands / Syncing Repositories
+   daemon                  A really simple server for Git repositories
+   fetch-pack              Receive missing objects from another repository
+   http-backend            Server side implementation of Git over HTTP
+   send-pack               Push objects over Git protocol to another repository
+   update-server-info      Update auxiliary info file to help dumb servers
+
+Low-level Commands / Internal Helpers
+   check-attr              Display gitattributes information
+   check-ignore            Debug gitignore / exclude files
+   check-mailmap           Show canonical names and email addresses of contacts
+   check-ref-format        Ensures that a reference name is well formed
+   column                  Display data in columns
+   credential              Retrieve and store user credentials
+   credential-cache        Helper to temporarily store passwords in memory
+   credential-store        Helper to store credentials on disk
+   fmt-merge-msg           Produce a merge commit message
+   hook                    Run git hooks
+   interpret-trailers      Add or parse structured information in commit messages
+   mailinfo                Extracts patch and authorship from a single e-mail message
+   mailsplit               Simple UNIX mbox splitter program
+   merge-one-file          The standard helper program to use with git-merge-index
+   patch-id                Compute unique ID for a patch
+   sh-i18n                 Git's i18n setup code for shell scripts
+   sh-setup                Common Git shell script setup code
+   stripspace              Remove unnecessary whitespace
+
+User-facing repository, command and file interfaces
+   attributes              Defining attributes per path
+   cli                     Git command-line interface and conventions
+   hooks                   Hooks used by Git
+   ignore                  Specifies intentionally untracked files to ignore
+   mailmap                 Map author/committer names and/or E-Mail addresses
+   modules                 Defining submodule properties
+   repository-layout       Git Repository Layout
+   revisions               Specifying revisions and ranges for Git
+
+Developer-facing file formats, protocols and other interfaces
+   format-bundle           The bundle file format
+   format-chunk            Chunk-based file formats
+   format-commit-graph     Git commit-graph format
+   format-index            Git index format
+   format-pack             Git pack format
+   format-signature        Git cryptographic signature formats
+   protocol-capabilities   Protocol v0 and v1 capabilities
+   protocol-common         Things common to various protocols
+   protocol-http           Git HTTP-based protocols
+   protocol-pack           How packs are transferred over-the-wire
+   protocol-v2             Git Wire Protocol, Version 2
+
+External commands
+   askpass
+   askyesno
+   credential-helper-selector
+   credential-manager
+   credential-manager-core
+   credential-manager-ui
+   flow
+   lfs
+   update-git-for-windows
